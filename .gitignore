@@ -1,0 +1,11 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+
+# Datos pesados o locales
+data/*.csv
