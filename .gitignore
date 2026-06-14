@@ -17,10 +17,14 @@ build/
 .mypy_cache/
 .ruff_cache/
 
-# Modelos serializados (se generan localmente)
+# Modelos serializados (se generan localmente con src/train.py)
 models/*.joblib
 models/*.pkl
 models/*.json
+
+# Particiones generadas por entrenamiento
+data/train.csv
+data/test.csv
 
 # Datos locales (opcional; el dataset base sí se versiona)
 # data/*.csv

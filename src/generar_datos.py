@@ -1,4 +1,4 @@
-"""Genera el dataset sintético de churn si no existe."""
+"""Genera el dataset sintético de churn alineado con el laboratorio."""
 from pathlib import Path
 
 import numpy as np
@@ -9,28 +9,23 @@ DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "churn_clientes.cs
 
 def generar_dataset(n_registros: int = 300, semilla: int = 42) -> pd.DataFrame:
     rng = np.random.default_rng(semilla)
-    tenure = rng.integers(1, 73, size=n_registros)
-    monthly_charges = rng.uniform(18, 120, size=n_registros).round(2)
-    total_charges = (tenure * monthly_charges * rng.uniform(0.85, 1.15, size=n_registros)).round(2)
-    senior_citizen = rng.integers(0, 2, size=n_registros)
-    num_dependents = rng.integers(0, 6, size=n_registros)
+    antiguedad = rng.integers(1, 73, size=n_registros)
+    cargo_mensual = rng.uniform(18, 120, size=n_registros).round(2)
+    reclamos = rng.integers(0, 11, size=n_registros)
 
     prob_churn = (
-        0.15
-        + (monthly_charges / 120) * 0.25
-        + (1 - tenure / 72) * 0.35
-        + senior_citizen * 0.05
-        - (num_dependents * 0.02)
+        0.12
+        + (cargo_mensual / 120) * 0.22
+        + (1 - antiguedad / 72) * 0.30
+        + (reclamos / 10) * 0.28
     )
     churn = (rng.random(n_registros) < prob_churn).astype(int)
 
     return pd.DataFrame(
         {
-            "tenure": tenure,
-            "monthly_charges": monthly_charges,
-            "total_charges": total_charges,
-            "senior_citizen": senior_citizen,
-            "num_dependents": num_dependents,
+            "antiguedad": antiguedad,
+            "cargo_mensual": cargo_mensual,
+            "reclamos": reclamos,
             "churn": churn,
         }
     )
