@@ -23,9 +23,11 @@ python src/train.py
 
 Verificar que se crearon:
 
-- `models/modelo_churn_v1.joblib`
+- `models/modelo_churn.pkl` (persistencia del laboratorio)
+- `models/modelo_churn_v1.joblib` (actividad)
 - `models/modelo_churn_v1_metadata.json`
 - `docs/metricas_modelo.md`
+- `data/train.csv` y `data/test.csv`
 
 ## 4. Ejecutar API
 
@@ -39,8 +41,7 @@ uvicorn api.main:app --reload --host 127.0.0.1 --port 8000
 |--------|------|-------------|
 | GET | `/` | Mensaje de bienvenida |
 | GET | `/health` | Estado del servicio y modelo |
-| GET | `/info` | Mejora personal: metadatos del modelo |
-| POST | `/predict` | Predicción de churn |
+| POST | `/predict` | Predicción de churn con validación |
 
 Documentación interactiva: http://127.0.0.1:8000/docs
 
@@ -53,15 +54,15 @@ curl http://127.0.0.1:8000/
 # Health
 curl http://127.0.0.1:8000/health
 
-# Predicción válida
-curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"tenure\": 12, \"monthly_charges\": 75.5, \"total_charges\": 900.0, \"senior_citizen\": 0, \"num_dependents\": 2}"
+# Predicción válida (formato del laboratorio)
+curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"antiguedad\": 12, \"cargo_mensual\": 95.5, \"reclamos\": 3}"
 
-# Campo faltante
-curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"tenure\": 12, \"monthly_charges\": 75.5}"
+# Campo faltante (sin cargo_mensual)
+curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"antiguedad\": 12, \"reclamos\": 3}"
 
-# Tipo incorrecto
-curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"tenure\": \"doce\", \"monthly_charges\": 75.5, \"total_charges\": 900.0, \"senior_citizen\": 0, \"num_dependents\": 2}"
+# Tipo incorrecto (antiguedad como texto)
+curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"antiguedad\": \"doce\", \"cargo_mensual\": 95.5, \"reclamos\": 3}"
 
-# Valor fuera de rango
-curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"tenure\": 999, \"monthly_charges\": 75.5, \"total_charges\": 900.0, \"senior_citizen\": 0, \"num_dependents\": 2}"
+# Valor fuera de rango (reclamos negativos)
+curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"antiguedad\": 12, \"cargo_mensual\": 95.5, \"reclamos\": -3}"
 ```
