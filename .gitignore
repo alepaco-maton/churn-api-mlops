@@ -2,10 +2,47 @@
 .venv/
 venv/
 env/
+.env
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Datos pesados o locales
-data/*.csv
+# Modelos serializados (se generan localmente)
+models/*.joblib
+models/*.pkl
+models/*.json
+
+# Datos locales (opcional; el dataset base sí se versiona)
+# data/*.csv
+
+# Credenciales y secretos
+*.pem
+*.key
+credentials.json
+secrets/
+
+# Archivos temporales y del sistema operativo
+*.tmp
+*.log
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.idea/
+.vscode/
+*.code-workspace
+
+# Jupyter
+.ipynb_checkpoints/
