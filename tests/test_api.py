@@ -35,6 +35,18 @@ def test_predict_solicitud_valida(client):
     assert cuerpo["prediccion"] in ("alto_riesgo", "bajo_riesgo")
     assert 0.0 <= cuerpo["probabilidad"] <= 1.0
     assert cuerpo["autor"] == "Alex J. Paco Surco"
+    assert "recomendacion" in cuerpo
+    assert len(cuerpo["recomendacion"]) > 0
+
+
+def test_info_endpoint(client):
+    respuesta = client.get("/info")
+    assert respuesta.status_code == 200
+    cuerpo = respuesta.json()
+    assert cuerpo["autor"] == "Alex J. Paco Surco"
+    assert cuerpo["variables"] == ["antiguedad", "cargo_mensual", "reclamos"]
+    assert "version_modelo" in cuerpo
+    assert "entrenado_en" in cuerpo
 
 
 def test_predict_campo_faltante(client):
@@ -54,5 +66,13 @@ def test_predict_valor_fuera_de_rango(client):
     respuesta = client.post(
         "/predict",
         json={"antiguedad": 12, "cargo_mensual": 95.5, "reclamos": -3},
+    )
+    assert respuesta.status_code == 422
+
+
+def test_predict_valor_incoherente(client):
+    respuesta = client.post(
+        "/predict",
+        json={"antiguedad": 3, "cargo_mensual": 95.5, "reclamos": 5},
     )
     assert respuesta.status_code == 422

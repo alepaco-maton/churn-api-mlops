@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ClienteChurnRequest(BaseModel):
@@ -26,8 +26,17 @@ class ClienteChurnRequest(BaseModel):
         examples=[3],
     )
 
+    @model_validator(mode="after")
+    def validar_coherencia(self) -> "ClienteChurnRequest":
+        if self.reclamos > self.antiguedad:
+            raise ValueError(
+                "Valor incoherente: los reclamos no pueden superar la antigüedad en meses."
+            )
+        return self
+
 
 class PredictResponse(BaseModel):
     prediccion: str = Field(..., description="Nivel de riesgo: alto_riesgo o bajo_riesgo")
     probabilidad: float = Field(..., ge=0.0, le=1.0, description="Probabilidad de abandono")
+    recomendacion: str = Field(..., description="Acción sugerida según el nivel de riesgo")
     autor: str

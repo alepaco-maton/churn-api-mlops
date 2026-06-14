@@ -41,7 +41,8 @@ uvicorn api.main:app --reload --host 127.0.0.1 --port 8000
 |--------|------|-------------|
 | GET | `/` | Mensaje de bienvenida |
 | GET | `/health` | Estado del servicio y modelo |
-| POST | `/predict` | Predicción de churn con validación |
+| GET | `/info` | Mejora personal: versión, autor, variables y métricas |
+| POST | `/predict` | Predicción de churn con validación y recomendación |
 
 Documentación interactiva: http://127.0.0.1:8000/docs
 
@@ -51,10 +52,13 @@ Documentación interactiva: http://127.0.0.1:8000/docs
 # Raíz
 curl http://127.0.0.1:8000/
 
-# Health
+# Health (evidencia 4 del PDF)
 curl http://127.0.0.1:8000/health
 
-# Predicción válida (formato del laboratorio)
+# Info — mejora personal (evidencia 8)
+curl http://127.0.0.1:8000/info
+
+# Predicción válida (evidencia 6)
 curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"antiguedad\": 12, \"cargo_mensual\": 95.5, \"reclamos\": 3}"
 
 # Campo faltante (sin cargo_mensual)
@@ -65,4 +69,7 @@ curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -
 
 # Valor fuera de rango (reclamos negativos)
 curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"antiguedad\": 12, \"cargo_mensual\": 95.5, \"reclamos\": -3}"
+
+# Valor incoherente (reclamos > antiguedad)
+curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -d "{\"antiguedad\": 3, \"cargo_mensual\": 95.5, \"reclamos\": 5}"
 ```
